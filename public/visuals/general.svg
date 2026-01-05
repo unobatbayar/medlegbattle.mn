@@ -1,0 +1,15 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Ерөнхий мэдлэг">
+  <defs>
+    <linearGradient id="g" x1="30" y1="50" x2="210" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#93C5FD"/>
+      <stop offset="0.5" stop-color="#A78BFA"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+  </defs>
+  <!-- spark / badge -->
+  <path d="M120 44l14 46 46 14-46 14-14 46-14-46-46-14 46-14 14-46z" stroke="url(#g)" stroke-width="12" stroke-linejoin="round"/>
+  <circle cx="120" cy="120" r="10" fill="white" fill-opacity="0.18"/>
+  <path d="M74 176c14-10 30-14 46-14s32 4 46 14" stroke="white" stroke-opacity="0.14" stroke-width="10" stroke-linecap="round"/>
+</svg>
+
+

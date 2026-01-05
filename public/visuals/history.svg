@@ -1,0 +1,18 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Түүх">
+  <defs>
+    <linearGradient id="g" x1="40" y1="40" x2="210" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBBF24"/>
+      <stop offset="0.55" stop-color="#FB7185"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+  </defs>
+  <!-- hourglass -->
+  <path d="M70 54h100" stroke="url(#g)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M70 186h100" stroke="url(#g)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M90 54c0 42 60 42 60 66s-60 24-60 66" stroke="white" stroke-opacity="0.22" stroke-width="10" stroke-linecap="round"/>
+  <path d="M150 54c0 42-60 42-60 66s60 24 60 66" stroke="white" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="120" cy="120" r="8" fill="url(#g)"/>
+  <path d="M110 128c4 8 16 8 20 0" stroke="white" stroke-opacity="0.18" stroke-width="8" stroke-linecap="round"/>
+</svg>
+
+

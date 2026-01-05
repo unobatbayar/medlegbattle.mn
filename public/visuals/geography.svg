@@ -1,0 +1,16 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Газарзүй">
+  <defs>
+    <linearGradient id="g" x1="30" y1="40" x2="210" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60A5FA"/>
+      <stop offset="0.55" stop-color="#A78BFA"/>
+      <stop offset="1" stop-color="#FB7185"/>
+    </linearGradient>
+  </defs>
+  <circle cx="120" cy="120" r="84" stroke="url(#g)" stroke-width="10" opacity="0.9"/>
+  <path d="M45 125c25-24 55-36 87-34 29 2 52 16 63 31" stroke="white" stroke-opacity="0.28" stroke-width="10" stroke-linecap="round"/>
+  <path d="M70 75c15 10 30 12 44 8 12-3 22-11 28-22" stroke="white" stroke-opacity="0.22" stroke-width="10" stroke-linecap="round"/>
+  <path d="M86 170c12-8 26-10 41-6 14 4 25 13 32 25" stroke="white" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="120" cy="120" r="40" stroke="white" stroke-opacity="0.18" stroke-width="8"/>
+</svg>
+
+

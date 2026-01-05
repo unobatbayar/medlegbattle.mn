@@ -1,0 +1,18 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Монгол">
+  <defs>
+    <linearGradient id="g" x1="40" y1="40" x2="210" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60A5FA"/>
+      <stop offset="0.55" stop-color="#FB7185"/>
+      <stop offset="1" stop-color="#FBBF24"/>
+    </linearGradient>
+  </defs>
+  <!-- stylized ger -->
+  <path d="M55 150c0-36 29-65 65-65s65 29 65 65" stroke="url(#g)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M70 150h100" stroke="white" stroke-opacity="0.22" stroke-width="10" stroke-linecap="round"/>
+  <path d="M90 92l30-22 30 22" stroke="white" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M112 150v-34c0-4 3-7 8-7s8 3 8 7v34" stroke="white" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="120" cy="78" r="10" stroke="url(#g)" stroke-width="8" opacity="0.9"/>
+  <path d="M40 175c28 18 60 27 80 27s52-9 80-27" stroke="white" stroke-opacity="0.12" stroke-width="10" stroke-linecap="round"/>
+</svg>
+
+

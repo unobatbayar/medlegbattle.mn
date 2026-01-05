@@ -1,0 +1,22 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Соёл">
+  <defs>
+    <linearGradient id="g" x1="40" y1="40" x2="210" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A78BFA"/>
+      <stop offset="0.5" stop-color="#FB7185"/>
+      <stop offset="1" stop-color="#FBBF24"/>
+    </linearGradient>
+  </defs>
+  <!-- theater mask -->
+  <path
+    d="M78 72c10-6 24-10 42-10s32 4 42 10v56c0 26-20 46-46 46S78 154 78 128V72z"
+    stroke="url(#g)"
+    stroke-width="12"
+    stroke-linejoin="round"
+  />
+  <path d="M98 110c8-10 18-10 26 0" stroke="white" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round"/>
+  <path d="M142 110c8-10 18-10 26 0" stroke="white" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round"/>
+  <path d="M108 142c10 10 22 10 32 0" stroke="white" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round"/>
+  <path d="M70 78c22 10 40 12 50 6" stroke="white" stroke-opacity="0.12" stroke-width="8" stroke-linecap="round"/>
+</svg>
+
+

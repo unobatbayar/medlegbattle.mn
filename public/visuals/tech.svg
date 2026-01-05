@@ -1,0 +1,18 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Технологи">
+  <defs>
+    <linearGradient id="g" x1="30" y1="40" x2="210" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#60A5FA"/>
+      <stop offset="0.55" stop-color="#A78BFA"/>
+      <stop offset="1" stop-color="#34D399"/>
+    </linearGradient>
+  </defs>
+  <!-- chip -->
+  <rect x="70" y="70" width="100" height="100" rx="18" stroke="url(#g)" stroke-width="12"/>
+  <rect x="98" y="98" width="44" height="44" rx="10" stroke="white" stroke-opacity="0.2" stroke-width="10"/>
+  <path d="M60 92h-18M60 120h-22M60 148h-18" stroke="white" stroke-opacity="0.16" stroke-width="10" stroke-linecap="round"/>
+  <path d="M180 92h18M180 120h22M180 148h18" stroke="white" stroke-opacity="0.16" stroke-width="10" stroke-linecap="round"/>
+  <path d="M92 60v-18M120 60v-22M148 60v-18" stroke="white" stroke-opacity="0.16" stroke-width="10" stroke-linecap="round"/>
+  <path d="M92 198v-18M120 198v-22M148 198v-18" stroke="white" stroke-opacity="0.16" stroke-width="10" stroke-linecap="round"/>
+</svg>
+
+

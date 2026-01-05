@@ -1,0 +1,16 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Спорт">
+  <defs>
+    <linearGradient id="g" x1="40" y1="40" x2="210" y2="210" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FBBF24"/>
+      <stop offset="0.55" stop-color="#FB7185"/>
+      <stop offset="1" stop-color="#60A5FA"/>
+    </linearGradient>
+  </defs>
+  <!-- trophy -->
+  <path d="M90 74h60v28c0 24-18 44-42 48v18h24v16H108v-16h24v-18c-24-4-42-24-42-48V74z" stroke="url(#g)" stroke-width="12" stroke-linejoin="round"/>
+  <path d="M90 86H68c0 22 10 38 28 46" stroke="white" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round"/>
+  <path d="M150 86h22c0 22-10 38-28 46" stroke="white" stroke-opacity="0.18" stroke-width="10" stroke-linecap="round"/>
+  <path d="M96 200h48" stroke="white" stroke-opacity="0.14" stroke-width="10" stroke-linecap="round"/>
+</svg>
+
+
