@@ -51,6 +51,7 @@ export default function DailyPlayPage() {
   const [shareStatus, setShareStatus] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [showCongrats, setShowCongrats] = useState(false);
+  const [shouldShowConfetti, setShouldShowConfetti] = useState(false);
 
   const current = questions[idx];
   const total = questions.length;
@@ -103,12 +104,20 @@ export default function DailyPlayPage() {
         }
 
         setQuestions(dailyQs);
-        setAnswers(saved?.answers?.map((a) => ({ questionId: a.questionId, pickedIndex: a.pickedIndex })) ?? []);
+        const restoredAnswers = saved?.answers?.map((a) => ({ questionId: a.questionId, pickedIndex: a.pickedIndex })) ?? [];
+        setAnswers(restoredAnswers);
         startedAtRef.current = saved?.startedAt ?? Date.now();
 
-        const nextIdx = Math.min((saved?.answers?.length ?? 0), dailyQs.length - 1);
+        const nextIdx = Math.min(restoredAnswers.length, dailyQs.length - 1);
         setIdx(nextIdx < 0 ? 0 : nextIdx);
-        setStage(saved?.finishedAt ? "results" : "playing");
+        
+        // If already finished, go to results but don't show confetti (it was already shown)
+        if (saved?.finishedAt) {
+          setStage("results");
+          setShouldShowConfetti(false); // Don't show confetti on refresh
+        } else {
+          setStage("playing");
+        }
 
         if (!saved) {
           const state: DailyRunState = {
@@ -165,6 +174,8 @@ export default function DailyPlayPage() {
     markCompleted(day);
     setStreak(loadStreak());
     setStage("results");
+    // Show confetti and congrats for new completion
+    setShouldShowConfetti(true);
   }
 
   useEffect(() => {
@@ -175,11 +186,16 @@ export default function DailyPlayPage() {
   }, [finished, stage]);
 
   useEffect(() => {
-    if (stage !== "results") return;
+    // Only show confetti and congrats if it's a NEW completion
+    if (stage !== "results" || !shouldShowConfetti) return;
+    
     setShowCongrats(true);
-    const t = window.setTimeout(() => setShowCongrats(false), 2200);
+    const t = window.setTimeout(() => {
+      setShowCongrats(false);
+      setShouldShowConfetti(false); // Mark as shown
+    }, 2200);
     return () => window.clearTimeout(t);
-  }, [stage]);
+  }, [stage, shouldShowConfetti]);
 
   const gridStatuses = useMemo(() => {
     if (!questions.length) return [];
@@ -243,27 +259,13 @@ export default function DailyPlayPage() {
         <Card>
           <div className="flex flex-col gap-4 sm:gap-5">
             <div className="flex items-center justify-between gap-3">
-              <div className="text-sm text-white/70">{idx + 1} / {total}</div>
+              <div className="text-base font-semibold text-white/90">
+                Асуулт <span className="text-white">{idx + 1}</span> / {total}
+              </div>
               <Badge variant="pink">{current.category}</Badge>
             </div>
 
             <ProgressBar value={idx + 1} max={total} />
-
-            {/* Minimal progress (neutral while playing) */}
-            <div className="hidden flex-wrap gap-2 sm:flex">
-              {questions.map((q, i) => {
-                const done = answerMap.has(q.id);
-                const isNow = i === idx;
-                return (
-                  <div
-                    key={q.id}
-                    className={`h-3 w-8 rounded-full border ${
-                      isNow ? "border-white/25 bg-white/15" : done ? "border-white/20 bg-white/10" : "border-white/10 bg-white/5"
-                    }`}
-                  />
-                );
-              })}
-            </div>
 
             {/* Mobile: keep media compact so answers fit without scroll */}
             <div className="sm:hidden">
@@ -278,21 +280,29 @@ export default function DailyPlayPage() {
             </div>
 
             {/* Mobile: single-column (clearer), Desktop: 2 columns */}
-            <div className="grid gap-2 sm:grid-cols-2 sm:gap-3">
+            <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
               {current.choices.map((ch, i) => {
                 const picked = answerMap.get(current.id) === i;
+                // Subtle color tints for each choice: A=blue, B=green, C=orange, D=pink
+                const choiceColors = [
+                  { border: "border-blue-400/20", bg: "bg-blue-500/8", hover: "hover:bg-blue-500/12", hoverBorder: "hover:border-blue-400/30", badge: "bg-blue-500/15 border-blue-400/25" },
+                  { border: "border-emerald-400/20", bg: "bg-emerald-500/8", hover: "hover:bg-emerald-500/12", hoverBorder: "hover:border-emerald-400/30", badge: "bg-emerald-500/15 border-emerald-400/25" },
+                  { border: "border-amber-400/20", bg: "bg-amber-500/8", hover: "hover:bg-amber-500/12", hoverBorder: "hover:border-amber-400/30", badge: "bg-amber-500/15 border-amber-400/25" },
+                  { border: "border-rose-400/20", bg: "bg-rose-500/8", hover: "hover:bg-rose-500/12", hoverBorder: "hover:border-rose-400/30", badge: "bg-rose-500/15 border-rose-400/25" }
+                ];
+                const colors = choiceColors[i] || choiceColors[0];
                 const base =
-                  "w-full rounded-2xl border p-3 text-left font-semibold transition active:scale-[0.99] disabled:cursor-not-allowed sm:p-5";
+                  "w-full rounded-2xl border p-4 text-left font-semibold transition active:scale-[0.98] disabled:cursor-not-allowed min-h-[64px] sm:p-5 sm:min-h-[72px]";
                 const styles = picked
-                  ? "border-white/30 bg-white/12"
-                  : "border-white/12 bg-white/5 hover:bg-white/10";
+                  ? `${colors.border} ${colors.bg} border-opacity-40 bg-opacity-15 shadow-lg shadow-white/10`
+                  : `${colors.border} ${colors.bg} ${colors.hover} ${colors.hoverBorder}`;
                 return (
                   <button key={i} className={`${base} ${styles}`} onClick={() => pick(i)} disabled={locked}>
                     <div className="flex items-start gap-3">
-                      <span className="mt-[2px] inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-[11px] sm:h-8 sm:w-8 sm:text-xs">
+                      <span className={`mt-[2px] inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border ${colors.badge} text-xs font-bold sm:h-9 sm:w-9 sm:text-sm`}>
                         {String.fromCharCode(65 + i)}
                       </span>
-                      <span className="text-sm leading-snug text-white/90 sm:text-base">{ch}</span>
+                      <span className="flex-1 text-base leading-relaxed text-white/95 sm:text-lg sm:leading-relaxed">{ch}</span>
                     </div>
                   </button>
                 );
@@ -304,7 +314,7 @@ export default function DailyPlayPage() {
 
       {stage === "results" && (
         <>
-          <Confetti show />
+          <Confetti show={shouldShowConfetti && showCongrats} />
           {showCongrats && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4">
               <div className="glass w-full max-w-md animate-pop rounded-3xl p-5 shadow-glow">
