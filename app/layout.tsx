@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const year = new Date().getFullYear();
   return (
     <html lang="mn">
       <body>
@@ -16,7 +17,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="absolute top-40 -right-24 h-80 w-80 rounded-full bg-fuchsia-500/20 blur-3xl" />
             <div className="absolute bottom-0 left-1/2 h-96 w-[36rem] -translate-x-1/2 rounded-full bg-rose-500/15 blur-3xl" />
           </div>
-          <div className="relative mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-10">{children}</div>
+          <div className="relative mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 py-6 sm:px-6 sm:py-10">
+            <div className="flex-1">{children}</div>
+            <footer className="mt-8 text-center text-xs text-white/45">
+              © {year} · Narantsetseg P.
+            </footer>
+          </div>
         </div>
       </body>
     </html>

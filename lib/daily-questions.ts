@@ -1,5 +1,5 @@
 import type { Question, QuestionCategory } from "@/lib/types";
-import { addDays, hashStringToSeed, seededShuffle, todayKey } from "@/lib/daily";
+import { hashStringToSeed, seededShuffle, todayKey } from "@/lib/daily";
 
 export const DAILY_CATEGORIES: QuestionCategory[] = [
   "Ерөнхий",
@@ -12,17 +12,17 @@ export const DAILY_CATEGORIES: QuestionCategory[] = [
   "Байгаль"
 ];
 
-function idsKey(qs: Question[]) {
-  return qs
-    .map((q) => q.id)
-    .slice()
-    .sort()
-    .join("|");
-}
-
-function buildDailyQuestionsOnce(bank: Question[], day: string, amount: number, salt: number): Question[] {
-  const seed = hashStringToSeed(`medlegbattle|daily|${day}|salt:${salt}`);
-  const pool = bank.filter((q) => DAILY_CATEGORIES.includes(q.category));
+function buildDailyQuestionsOnce(
+  bank: Question[],
+  seed: number,
+  amount: number,
+  dayIndex: number,
+  seenIds?: Set<string>
+): Question[] {
+  // Filter out already-seen questions to ensure no repeats ever.
+  const pool = bank.filter(
+    (q) => DAILY_CATEGORIES.includes(q.category) && (!seenIds || !seenIds.has(q.id))
+  );
 
   // Group by category and do a deterministic, balanced draw.
   const groups = new Map<QuestionCategory, Question[]>();
@@ -37,58 +37,62 @@ function buildDailyQuestionsOnce(bank: Question[], day: string, amount: number, 
     s = (s + 0x9e3779b9) >>> 0;
   }
 
-  // Mongolia-first daily plan (more relevant for average Mongolian).
-  // Counts for 10 questions: Монгол 3, Ерөнхий 3, Газарзүй 2, ШУ 1, Соёл 1
+  // Equal proportional daily plan: all categories appear roughly equally.
+  // Default for 10 questions: 4 categories get 2 questions each, 2 categories get 1 question each
+  // This ensures equal representation across all categories
   const basePlan: QuestionCategory[] = [
-    "Монгол",
-    "Ерөнхий",
-    "Монгол",
     "Газарзүй",
     "Ерөнхий",
+    "Монгол",
     "Шинжлэх ухаан",
-    "Монгол",
+    "Соёл",
+    "Түүх",
     "Газарзүй",
     "Ерөнхий",
-    "Соёл"
+    "Монгол",
+    "Шинжлэх ухаан"
   ];
-  const plan = seededShuffle([...basePlan], seed ^ 0xA1B2C3D4).slice(0, amount);
+  const oneDayPlan = seededShuffle([...basePlan], seed ^ 0xA1B2C3D4).slice(0, amount);
 
+  // Build a non-overlapping schedule by consuming from buckets up to dayIndex.
+  // This guarantees no overlap between days as long as the bank has enough questions.
+  const fallbackOrder: QuestionCategory[] = ["Газарзүй", "Ерөнхий", "Шинжлэх ухаан", "Соёл", "Түүх", "Байгаль", "Спорт", "Монгол"];
   const picked: Question[] = [];
-  for (const cat of plan) {
-    const bucket = groups.get(cat);
-    if (bucket && bucket.length) {
-      picked.push(bucket.pop()!);
-      continue;
-    }
-    // fallback: pull from Монгол/Ерөнхий first, then any.
-    const fallbackOrder: QuestionCategory[] = ["Монгол", "Ерөнхий", "Газарзүй", "Шинжлэх ухаан", "Соёл", "Байгаль", "Спорт", "Түүх"];
-    let got: Question | null = null;
-    for (const fcat of fallbackOrder) {
-      const b = groups.get(fcat);
-      if (b && b.length) {
-        got = b.pop()!;
-        break;
+  const targetDay = Math.max(1, Math.min(1000, dayIndex));
+  for (let d = 1; d <= targetDay; d++) {
+    for (const cat of oneDayPlan) {
+      let q: Question | undefined;
+      const bucket = groups.get(cat);
+      if (bucket?.length) q = bucket.pop();
+      if (!q) {
+        for (const fcat of fallbackOrder) {
+          const b = groups.get(fcat);
+          if (b?.length) {
+            q = b.pop();
+            break;
+          }
+        }
       }
+      if (!q) break;
+      if (d === targetDay) picked.push(q);
     }
-    if (got) picked.push(got);
   }
 
   // Final deterministic shuffle so order isn’t always “one per category”.
   return seededShuffle(picked, seed ^ 0x55AA12FF);
 }
 
-export function buildDailyQuestions(bank: Question[], day = todayKey(), amount = 10): Question[] {
-  // Ensure the next day's puzzle isn't identical to yesterday's.
-  const prevDay = addDays(day, -1);
-  const prev = buildDailyQuestionsOnce(bank, prevDay, amount, 0);
-  const prevKey = idsKey(prev);
-
-  for (let salt = 0; salt < 25; salt++) {
-    const cur = buildDailyQuestionsOnce(bank, day, amount, salt);
-    if (idsKey(cur) !== prevKey) return cur;
-  }
-  // Fallback (extremely unlikely): return first attempt.
-  return buildDailyQuestionsOnce(bank, day, amount, 0);
+export function buildDailyQuestions(
+  bank: Question[],
+  day = todayKey(),
+  amount = 10,
+  opts?: { firstDay: string; dayIndex: number; seenIds?: Set<string> }
+): Question[] {
+  const firstDay = opts?.firstDay ?? day;
+  const dayIndex = opts?.dayIndex ?? 1;
+  const seenIds = opts?.seenIds;
+  const seed = hashStringToSeed(`medlegbattle|schedule|first:${firstDay}`);
+  return buildDailyQuestionsOnce(bank, seed ^ hashStringToSeed(day), amount, dayIndex, seenIds);
 }
 
 

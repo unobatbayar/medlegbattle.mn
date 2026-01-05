@@ -17,6 +17,7 @@ export type DailyRunState = {
 const KEY_PREFIX = "medlegbattle.daily.v1.";
 const STREAK_KEY = "medlegbattle.dailyStreak.v1";
 const FIRST_DAY_KEY = "medlegbattle.firstSeenDay.v1";
+const SEEN_QUESTIONS_KEY = "medlegbattle.seenQuestions.v1";
 
 export function dayStorageKey(day = todayKey()) {
   return `${KEY_PREFIX}${day}`;
@@ -98,6 +99,51 @@ export function markCompleted(day: string) {
   const best = Math.max(s.best, current);
   const next: DailyStreak = { lastCompletedDay: day, current, best };
   localStorage.setItem(STREAK_KEY, JSON.stringify(next));
+}
+
+/**
+ * Get all question IDs that the player has ever seen.
+ */
+export function getSeenQuestionIds(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = localStorage.getItem(SEEN_QUESTIONS_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw) as string[];
+    if (!Array.isArray(parsed)) return new Set();
+    return new Set(parsed);
+  } catch {
+    return new Set();
+  }
+}
+
+/**
+ * Mark a question ID as seen (never show it again).
+ */
+export function markQuestionSeen(questionId: string) {
+  if (typeof window === "undefined") return;
+  const seen = getSeenQuestionIds();
+  if (seen.has(questionId)) return; // already seen
+  seen.add(questionId);
+  localStorage.setItem(SEEN_QUESTIONS_KEY, JSON.stringify(Array.from(seen)));
+}
+
+/**
+ * Mark multiple question IDs as seen at once.
+ */
+export function markQuestionsSeen(questionIds: string[]) {
+  if (typeof window === "undefined") return;
+  const seen = getSeenQuestionIds();
+  let changed = false;
+  for (const id of questionIds) {
+    if (!seen.has(id)) {
+      seen.add(id);
+      changed = true;
+    }
+  }
+  if (changed) {
+    localStorage.setItem(SEEN_QUESTIONS_KEY, JSON.stringify(Array.from(seen)));
+  }
 }
 
 

@@ -13,7 +13,7 @@ export const ALL_CATEGORIES: QuestionCategory[] = [
 ];
 
 export async function loadQuestionBank(): Promise<Question[]> {
-  const res = await fetch("/questions.mn.json", { cache: "no-store" });
+  const res = await fetch("/questions.mn.js", { cache: "no-store" });
   if (!res.ok) throw new Error("Асуултуудыг татаж чадсангүй.");
   const data = (await res.json()) as unknown;
   if (!Array.isArray(data)) throw new Error("Асуултын сан эвдэрсэн байна.");

@@ -11,7 +11,17 @@ import { QuestionMedia } from "@/components/quiz/QuestionMedia";
 import type { Question } from "@/lib/types";
 import { loadQuestionBank, shuffleChoices } from "@/lib/questions-client";
 import { buildDailyQuestions } from "@/lib/daily-questions";
-import { loadDailyState, loadStreak, markCompleted, playerPuzzleNumber, saveDailyState, type DailyRunState } from "@/lib/daily-storage";
+import {
+  getOrInitFirstSeenDay,
+  getSeenQuestionIds,
+  loadDailyState,
+  loadStreak,
+  markCompleted,
+  markQuestionsSeen,
+  playerPuzzleNumber,
+  saveDailyState,
+  type DailyRunState
+} from "@/lib/daily-storage";
 import { todayKey } from "@/lib/daily";
 
 type Stage = "loading" | "playing" | "results";
@@ -30,6 +40,7 @@ function gridChar(status: "unknown" | "correct" | "wrong") {
 export default function DailyPlayPage() {
   const day = useMemo(() => todayKey(), []);
   const dayNo = useMemo(() => playerPuzzleNumber(day), [day]);
+  const firstDay = useMemo(() => getOrInitFirstSeenDay(day), [day]);
   const [stage, setStage] = useState<Stage>("loading");
   const [error, setError] = useState<string | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -70,9 +81,17 @@ export default function DailyPlayPage() {
       try {
         const saved = loadDailyState(day);
         const bank = await loadQuestionBank();
+        const seenIds = getSeenQuestionIds();
 
-        let dailyQs = buildDailyQuestions(bank, day, 10).map(shuffleChoices);
+        let dailyQs = buildDailyQuestions(bank, day, 10, {
+          firstDay,
+          dayIndex: dayNo,
+          seenIds
+        }).map(shuffleChoices);
         const questionIds = dailyQs.map((q) => q.id);
+
+        // Mark all questions in today's set as seen immediately (never repeat them).
+        markQuestionsSeen(questionIds);
 
         if (saved && saved.questionIds?.length) {
           // Rehydrate exact question set by ID so “daily” is stable and resumable.
@@ -107,7 +126,7 @@ export default function DailyPlayPage() {
       }
     }
     init();
-  }, [day]);
+  }, [day, dayNo, firstDay]);
 
   function persist(nextAnswers: Picked[], finishedAt?: number) {
     const state: DailyRunState = {
