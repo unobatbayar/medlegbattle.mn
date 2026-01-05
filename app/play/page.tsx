@@ -209,7 +209,7 @@ export default function DailyPlayPage() {
   const shareText = useMemo(() => {
     const header = `Мэдлэгийн Тулаан — Өдрийн сорил #${dayNo} (${day})\nОноо: ${score}/${total}`;
     const grid = gridStatuses.map((s) => gridChar(s)).join("");
-    return `${header}\n${grid}\n#medlegbattle`;
+    return `${header}\n${grid}\n#medlegbattle\n\nhttps://medlegbattle.vercel.app/`;
   }, [day, dayNo, score, total, gridStatuses]);
 
   async function share() {
