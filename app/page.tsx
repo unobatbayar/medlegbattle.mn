@@ -18,7 +18,7 @@ export default function HomePage() {
         </h1>
 
         <p className="text-pretty text-lg text-white/90 sm:text-xl">
-          Өдөр бүр 10 асуулт. Үр дүнгээ төгсгөлд нь үз...
+          Өдөр бүр 10 асуулт. Өөрийгөө сориход бэлэн үү?
         </p>
       </div>
 
