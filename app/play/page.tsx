@@ -67,7 +67,12 @@ export default function DailyPlayPage() {
   const locked = current ? answerMap.has(current.id) : false;
 
   const score = useMemo(() => {
-    // If we have a saved score and answers haven't been restored yet, use saved score
+    // If we're in results stage (finished game), always use saved score to prevent 0/10
+    // This handles both refresh and navigation back to /play after finishing
+    if (stage === "results" && savedScoreRef.current !== null && questions.length > 0) {
+      return savedScoreRef.current;
+    }
+    // If we have a saved score but answers haven't been restored yet, use saved score
     if (savedScoreRef.current !== null && answers.length === 0 && questions.length > 0) {
       return savedScoreRef.current;
     }
@@ -77,12 +82,12 @@ export default function DailyPlayPage() {
       if (p === undefined) continue;
       if (p === q.answerIndex) s++;
     }
-    // Update saved score ref when we calculate the real score
-    if (s > 0 || answers.length > 0) {
+    // Update saved score ref when we calculate the real score (but not if we're in results stage)
+    if (stage !== "results" && (s > 0 || answers.length > 0)) {
       savedScoreRef.current = s;
     }
     return s;
-  }, [questions, answerMap, answers.length]);
+  }, [questions, answerMap, answers.length, stage]);
 
   const finished = answers.length === total && total > 0;
 
@@ -116,7 +121,7 @@ export default function DailyPlayPage() {
         setQuestions(dailyQs);
         const restoredAnswers = saved?.answers?.map((a) => ({ questionId: a.questionId, pickedIndex: a.pickedIndex })) ?? [];
         
-        // Calculate score from saved answers to prevent showing 0/10 on refresh
+        // Calculate score from saved answers to prevent showing 0/10 on refresh or navigation
         if (saved?.finishedAt && restoredAnswers.length > 0) {
           let calculatedScore = 0;
           const answerMapTemp = new Map<string, number>();
@@ -130,6 +135,9 @@ export default function DailyPlayPage() {
             }
           }
           savedScoreRef.current = calculatedScore;
+        } else if (saved?.finishedAt) {
+          // Even if answers are empty, if game is finished, set score to 0 explicitly
+          savedScoreRef.current = 0;
         } else {
           savedScoreRef.current = null;
         }
@@ -142,6 +150,7 @@ export default function DailyPlayPage() {
         setIdx(nextIdx < 0 ? 0 : nextIdx);
         
         // If already finished, go to results but don't show confetti (it was already shown)
+        // Set stage BEFORE score calculation to ensure savedScoreRef is used
         if (saved?.finishedAt) {
           setStage("results");
           setShouldShowConfetti(false); // Don't show confetti on refresh
