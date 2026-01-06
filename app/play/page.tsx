@@ -53,7 +53,18 @@ export default function DailyPlayPage() {
   const [showCongrats, setShowCongrats] = useState(false);
   const [shouldShowConfetti, setShouldShowConfetti] = useState(false);
   // Store saved score to prevent showing 0/10 on refresh
-  const savedScoreRef = useRef<number | null>(null);
+  // Initialize immediately from localStorage to prevent 0/10 on mount
+  const getInitialScore = () => {
+    if (typeof window !== "undefined") {
+      const saved = loadDailyState(day);
+      if (saved?.finishedAt && saved.answers?.length > 0 && saved.questionIds?.length > 0) {
+        // Special marker: finished game exists, score will be calculated in useEffect
+        return -1;
+      }
+    }
+    return null;
+  };
+  const savedScoreRef = useRef<number | null>(getInitialScore());
 
   const current = questions[idx];
   const total = questions.length;
@@ -69,13 +80,27 @@ export default function DailyPlayPage() {
   const score = useMemo(() => {
     // If we're in results stage (finished game), always use saved score to prevent 0/10
     // This handles both refresh and navigation back to /play after finishing
-    if (stage === "results" && savedScoreRef.current !== null && questions.length > 0) {
-      return savedScoreRef.current;
+    if (stage === "results") {
+      // If we have a calculated score, use it
+      if (savedScoreRef.current !== null && savedScoreRef.current >= 0) {
+        return savedScoreRef.current;
+      }
+      // If we have the marker (-1), calculate from current answers
+      if (savedScoreRef.current === -1 && questions.length > 0 && answers.length > 0) {
+        let s = 0;
+        for (const q of questions) {
+          const p = answerMap.get(q.id);
+          if (p !== undefined && p === q.answerIndex) s++;
+        }
+        savedScoreRef.current = s; // Cache it
+        return s;
+      }
     }
     // If we have a saved score but answers haven't been restored yet, use saved score
-    if (savedScoreRef.current !== null && answers.length === 0 && questions.length > 0) {
+    if (savedScoreRef.current !== null && savedScoreRef.current >= 0 && answers.length === 0 && questions.length > 0) {
       return savedScoreRef.current;
     }
+    // Calculate score normally
     let s = 0;
     for (const q of questions) {
       const p = answerMap.get(q.id);

@@ -39,7 +39,7 @@ function qid() {
 function makeMCQ({ category, question, correct, wrongs, explanation, difficulty }) {
   const wrongPool = uniq(wrongs).filter((x) => x !== correct);
   while (wrongPool.length < 3) {
-    wrongPool.push(generateFallbackWrong(correct, wrongPool));
+    wrongPool.push(generateFallbackWrong(category, correct, wrongPool, question));
   }
   const pickedWrongs = shuffle([...wrongPool]).slice(0, 3);
   const all = shuffle([correct, ...pickedWrongs]);
@@ -56,42 +56,71 @@ function makeMCQ({ category, question, correct, wrongs, explanation, difficulty 
   };
 }
 
-function generateFallbackWrong(correct, existing) {
+function generateFallbackWrong(category, correct, existing, question = "") {
   const exists = (x) => x === correct || existing.includes(x);
-  // numeric string fallback
+  
+  // numeric string fallback - make it more plausible
   if (/^-?\d+$/.test(String(correct))) {
     const n = Number(correct);
+    // Generate numbers closer to the correct answer for more plausible wrong choices
+    const range = Math.max(1, Math.floor(n * 0.3)); // 30% range
     for (let t = 0; t < 50; t++) {
-      const candidate = String(n + randInt(-25, 25) + (t % 2 === 0 ? 1 : 0));
+      const offset = randInt(-range, range);
+      if (offset === 0) continue;
+      const candidate = String(n + offset);
       if (!exists(candidate)) return candidate;
     }
     return String(n + 1);
   }
 
-  const pool = [
-    "Улаанбаатар",
-    "Токио",
-    "Москва",
-    "Лондон",
-    "Парис",
-    "Ром",
-    "Берлин",
-    "Бээжин",
-    "Сөүл",
-    "Каир",
-    "Анкара",
-    "Шинэ Дели",
-    "Бангкок",
-    "Ханой",
-    "Жакарта",
-    "Канберра",
-    "Лима",
-    "Богота",
-    "Афин"
+  // Category-specific plausible wrong answers
+  const categoryPools = {
+    "Газарзүй": [
+      "Улаанбаатар", "Токио", "Москва", "Лондон", "Парис", "Ром", "Берлин", "Бээжин",
+      "Сөүл", "Каир", "Анкара", "Шинэ Дели", "Бангкок", "Ханой", "Жакарта", "Канберра",
+      "Лима", "Богота", "Афин", "Мадрид", "Амстердам", "Стокгольм", "Осло", "Хельсинки"
+    ],
+    "Монгол": [
+      "Эрдэнэт", "Дархан", "Хархорин", "Мөрөн", "Улиастай", "Сайншанд", "Чойбалсан",
+      "Баруун-Урт", "Зуунмод", "Улаангом", "Ховд", "Чингис", "Цэцэрлэг", "Алтай",
+      "Булган", "Чойр", "Мандалговь", "Арвайхээр", "Даланзадгад"
+    ],
+    "Шинжлэх ухаан": [
+      "H₂O", "CO₂", "O₂", "NaCl", "H₂SO₄", "NH₃", "CH₄", "C₆H₁₂O₆",
+      "Устөрөгч", "Гели", "Лити", "Бор", "Азот", "Фтор", "Неон", "Натри",
+      "Магни", "Хөнгөн цагаан", "Цахиур", "Фосфор", "Хүхэр", "Хлор"
+    ],
+    "Түүх": [
+      "1914", "1945", "1776", "1789", "1989", "476", "1066", "1492",
+      "1917", "1929", "1939", "1969", "1980", "2001", "2008"
+    ],
+    "Соёл": [
+      "Шекспир", "Леонардо да Винчи", "Моцарт", "Бетховен", "Пикассо", "Ван Гог",
+      "Микеланжело", "Бах", "Шопен", "Рембрандт", "Да Винчи", "Сальвадор Дали"
+    ],
+    "Ерөнхий": [
+      "Номхон далай", "Атлантын далай", "Энэтхэгийн далай", "Хойд мөсөн далай",
+      "Эверест", "Килиманжаро", "Эльбрус", "Аконкагуа", "Денали", "Вильсон"
+    ]
+  };
+
+  // Try category-specific pool first
+  const categoryPool = categoryPools[category];
+  if (categoryPool) {
+    for (let t = 0; t < 200; t++) {
+      const candidate = categoryPool[randInt(0, categoryPool.length - 1)];
+      if (!exists(candidate)) return candidate;
+    }
+  }
+
+  // Fallback to general geography pool
+  const generalPool = [
+    "Улаанбаатар", "Токио", "Москва", "Лондон", "Парис", "Ром", "Берлин", "Бээжин",
+    "Сөүл", "Каир", "Анкара", "Шинэ Дели", "Бангкок", "Ханой", "Жакарта", "Канберра"
   ];
 
   for (let t = 0; t < 200; t++) {
-    const candidate = pool[randInt(0, pool.length - 1)];
+    const candidate = generalPool[randInt(0, generalPool.length - 1)];
     if (!exists(candidate)) return candidate;
   }
   // last resort
