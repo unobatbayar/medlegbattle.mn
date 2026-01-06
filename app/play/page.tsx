@@ -52,6 +52,8 @@ export default function DailyPlayPage() {
   const [showDetails, setShowDetails] = useState(false);
   const [showCongrats, setShowCongrats] = useState(false);
   const [shouldShowConfetti, setShouldShowConfetti] = useState(false);
+  // Store saved score to prevent showing 0/10 on refresh
+  const savedScoreRef = useRef<number | null>(null);
 
   const current = questions[idx];
   const total = questions.length;
@@ -65,14 +67,22 @@ export default function DailyPlayPage() {
   const locked = current ? answerMap.has(current.id) : false;
 
   const score = useMemo(() => {
+    // If we have a saved score and answers haven't been restored yet, use saved score
+    if (savedScoreRef.current !== null && answers.length === 0 && questions.length > 0) {
+      return savedScoreRef.current;
+    }
     let s = 0;
     for (const q of questions) {
       const p = answerMap.get(q.id);
       if (p === undefined) continue;
       if (p === q.answerIndex) s++;
     }
+    // Update saved score ref when we calculate the real score
+    if (s > 0 || answers.length > 0) {
+      savedScoreRef.current = s;
+    }
     return s;
-  }, [questions, answerMap]);
+  }, [questions, answerMap, answers.length]);
 
   const finished = answers.length === total && total > 0;
 
@@ -105,6 +115,26 @@ export default function DailyPlayPage() {
 
         setQuestions(dailyQs);
         const restoredAnswers = saved?.answers?.map((a) => ({ questionId: a.questionId, pickedIndex: a.pickedIndex })) ?? [];
+        
+        // Calculate score from saved answers to prevent showing 0/10 on refresh
+        if (saved?.finishedAt && restoredAnswers.length > 0) {
+          let calculatedScore = 0;
+          const answerMapTemp = new Map<string, number>();
+          for (const a of restoredAnswers) {
+            answerMapTemp.set(a.questionId, a.pickedIndex);
+          }
+          for (const q of dailyQs) {
+            const p = answerMapTemp.get(q.id);
+            if (p !== undefined && p === q.answerIndex) {
+              calculatedScore++;
+            }
+          }
+          savedScoreRef.current = calculatedScore;
+        } else {
+          savedScoreRef.current = null;
+        }
+        
+        // Set answers synchronously to ensure score calculation works correctly
         setAnswers(restoredAnswers);
         startedAtRef.current = saved?.startedAt ?? Date.now();
 

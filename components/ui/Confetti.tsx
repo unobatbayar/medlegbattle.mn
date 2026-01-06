@@ -25,7 +25,7 @@ export function Confetti({ show }: { show: boolean }) {
   if (!mounted || !show) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-0 overflow-hidden">
+    <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">
       {pieces.map((p) => (
         <span
           key={p.id}
@@ -36,7 +36,9 @@ export function Confetti({ show }: { show: boolean }) {
             height: `${p.size * 0.6}px`,
             background: `hsl(${p.hue} 95% 65%)`,
             transform: `rotate(${p.rot}deg)`,
-            animationDelay: `${p.delay}s`
+            animationDelay: `${p.delay}s`,
+            opacity: 1,
+            zIndex: 50
           }}
         />
       ))}
@@ -46,9 +48,12 @@ export function Confetti({ show }: { show: boolean }) {
             transform: translateY(0) rotate(0deg);
             opacity: 1;
           }
+          50% {
+            opacity: 1;
+          }
           100% {
             transform: translateY(110vh) rotate(420deg);
-            opacity: 0;
+            opacity: 0.8;
           }
         }
       `}</style>
