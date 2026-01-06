@@ -17,22 +17,22 @@ export default function HomePage() {
           <span className="text-gradient">Мэдлэгийн Тулаан</span>
         </h1>
 
-        <p className="text-pretty text-lg text-white/90 sm:text-xl">
+        <p className="text-pretty text-lg text-white/95 sm:text-xl">
           Өдөр бүр 10 асуулт. Өөрийгөө сориход бэлэн үү?
         </p>
       </div>
 
       {/* Description section */}
       <div className="flex w-full max-w-lg flex-col gap-4 px-2 text-center sm:gap-4">
-        <div className="flex flex-wrap justify-center gap-3 text-xs text-white/70 sm:text-sm">
-          <span className="rounded-full bg-white/10 px-3 py-1">✓ 10,500+ асуулт</span>
-          <span className="rounded-full bg-white/10 px-3 py-1">✓ Өдөр бүр шинэ</span>
-          <span className="rounded-full bg-white/10 px-3 py-1">✓ Цуврал</span>
+        <div className="flex flex-wrap justify-center gap-3 text-xs text-white/80 sm:text-sm">
+          <span className="rounded-full bg-white/15 px-3 py-1">✓ 10,500+ асуулт</span>
+          <span className="rounded-full bg-white/15 px-3 py-1">✓ Өдөр бүр шинэ</span>
+          <span className="rounded-full bg-white/15 px-3 py-1">✓ Цуврал</span>
         </div>
       </div>
 
       {/* Bottom instructions */}
-      <div className="max-w-md space-y-1 text-xs text-white/60 sm:space-y-2 sm:text-sm">
+      <div className="max-w-md space-y-1 text-xs text-white/70 sm:space-y-2 sm:text-sm">
         <p>Хариултаа сонгоод автоматаар дараагийн асуулт руу шилжинэ.</p>
         <p>Дуусмагц оноогоо үзээд найзуудтайгаа хуваалцаарай.</p>
       </div>

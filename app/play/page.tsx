@@ -272,7 +272,7 @@ export default function DailyPlayPage() {
   return (
     <main className="flex flex-col gap-4 sm:gap-6">
       <div className="flex items-center justify-between gap-3">
-        <Link href="/" className="text-sm font-semibold text-white/80 hover:text-white">
+        <Link href="/" className="text-sm font-semibold text-white/90 hover:text-white">
           ← Нүүр
         </Link>
         <div className="flex items-center gap-2">
@@ -290,7 +290,7 @@ export default function DailyPlayPage() {
 
       {stage === "loading" && (
         <Card>
-          <div className="text-sm text-white/70">Ачаалж байна…</div>
+          <div className="text-sm text-white/85">Ачаалж байна…</div>
         </Card>
       )}
 
@@ -314,7 +314,7 @@ export default function DailyPlayPage() {
               <QuestionMedia category={current.category} question={current.question} />
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-black/25 p-3 sm:p-5">
+            <div className="rounded-3xl border border-white/15 bg-white/5 p-3 sm:p-5">
               <div className="text-pretty text-base font-extrabold leading-snug sm:text-xl">{current.question}</div>
             </div>
 
@@ -375,26 +375,26 @@ export default function DailyPlayPage() {
             <div className="flex flex-col gap-5">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <div className="text-sm text-white/70">Өдрийн сорил — үр дүн</div>
+                  <div className="text-sm text-white/75">Өдрийн сорил — үр дүн</div>
                   <div className="mt-1 text-3xl font-extrabold">
-                    {score} / {total} <span className="text-base font-semibold text-white/60">({Math.round((score / total) * 100)}%)</span>
+                    {score} / {total} <span className="text-base font-semibold text-white/70">({Math.round((score / total) * 100)}%)</span>
                   </div>
                 </div>
-                <div className="text-right text-xs text-white/60">
+                <div className="text-right text-xs text-white/75">
                   Цуврал: <span className="font-semibold text-white">{streak.current}</span> · Best:{" "}
                   <span className="font-semibold text-white">{streak.best}</span>
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-4">
+              <div className="rounded-3xl border border-white/15 bg-white/8 p-4">
                 <div className="text-sm font-semibold">Хуваалцах grid</div>
                 <div className="mt-2 text-2xl leading-none">{gridStatuses.map((s) => gridChar(s)).join("")}</div>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <Button onClick={share}>Хуваалцах</Button>
-                  <span className="text-xs text-white/60">Маргааш дахин ирээрэй</span>
+                  <span className="text-xs text-white/75">Маргааш дахин ирээрэй</span>
                 </div>
-                {shareStatus && <div className="mt-2 text-xs text-white/70">{shareStatus}</div>}
-                <div className="mt-2 text-xs text-white/60">Маргааш шинэ сорил автоматаар гарна.</div>
+                {shareStatus && <div className="mt-2 text-xs text-white/80">{shareStatus}</div>}
+                <div className="mt-2 text-xs text-white/70">Маргааш шинэ сорил автоматаар гарна.</div>
               </div>
 
               <div className="flex items-center justify-between gap-3">
